@@ -93,6 +93,7 @@ Class engine extends MemCachedClass {
             if(file_exists("templates/".$this->get($this->prefix."template")."/"."_".$file.".html")) {
                 $file_content = $this->loadTemplate($file);
             } else {
+                http_response_code(404);
                 $file_content = $this->loadTemplate("404");
             }
             $content = $this->loadTemplate("header") . $file_content . $this->loadTemplate("footer");
