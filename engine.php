@@ -90,7 +90,7 @@ Class engine extends MemCachedClass {
         $file = isset($_GET[$this->get($this->prefix."getvar")]) ? $_GET[$this->get($this->prefix."getvar")] : "index";
         
         if(!($content = $this->get($this->prefix."html_data_minified::".$file)) OR $force_reload) {
-            if(file_exists("templates/".$this->get($this->prefix."template")."/"."_".$file.".html")) {
+            if(file_exists("templates/".$this->get($this->prefix."template")."/"."_".$file.".html") AND ($file != "header" AND $file != "footer")) {
                 $file_content = $this->loadTemplate($file);
             } else {
                 http_response_code(404);
