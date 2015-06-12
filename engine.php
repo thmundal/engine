@@ -1,6 +1,6 @@
 <?php
 
-require_once("../memcached/MemCachedClass.php");
+require_once("lib/memcached/MemCachedClass.php");
 
 Class engine extends MemCachedClass {
     /**

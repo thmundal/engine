@@ -1,0 +1,3 @@
+[submodule "lib/memcached"]
+	path = lib/memcached
+	url = git@github.com:thmundal/memcachedclass.git
