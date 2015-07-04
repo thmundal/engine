@@ -6,12 +6,16 @@ if(isUnSupported()) {
     document.body.innerHTML = 'You are using a very, very old web-browser which is not supported by this site. Please update your browser. We can recommend <a href="http://chrome.google.com">Google Chrome</a>';
     throw new Error("Using an unsupported browser, stopping execution");
 }
-
 var callbacks = [];
 function l() {
-	var css = ["css/default.css"];
+	var css = ["http:\/\/fonts.googleapis.com/css?family=Open+Sans+Condensed:300"].concat(engine.css);;
 	// DO NOT LOAD THIS FILE (default.js) IN THE ARRAY! MEGASUPERRECURSIONMONSTER!
-	var js = ["http:\/\/code.jquery.com/jquery-2.1.4.min.js", "templates/default/js/script.js"];
+	var js = ["http:\/\/code.jquery.com/jquery-2.1.4.min.js"].concat(engine.js);
+    
+    if(js.indexOf("engine/engine.js") > -1) {
+        throw new Error("Fatal error: engine.js included in load will cause an endless loop.");
+    }
+    
 	var count = 0;
 
 	function complete() {
@@ -23,55 +27,11 @@ function l() {
 	js.forEach(function(i) { {var j = document.createElement("script"); j.src=i; document.head.appendChild(j); j.onload = complete; } }); 
 }
 
-try {
-    var raf = requestAnimationFrame || mozRequestAnimationFrame ||
-              webkitRequestAnimationFrame || msRequestAnimationFrame;
-} catch(e) {
-    var raf = false;
-}
+var raf = requestAnimationFrame || mozRequestAnimationFrame ||
+		  webkitRequestAnimationFrame || msRequestAnimationFrame;
 if (raf) { raf(l);}
 else {window.addEventListener('load', l);};
 
 function addLoadedCallback(callback) {
 	callbacks.push(callback);
 }
-
-addLoadedCallback(function() {
-    function loadComplete() {
-        if(thingstoload == thingsloaded) {
-            document.getElementById("loading").style.display = "none";
-        }        
-    }
-    
-    // Load layer images
-    var layers = $('.layer');
-    var images = $('img');
-    
-    var thingstoload = images.length;
-    var thingsloaded = 0;
-    
-    layers.each(function(i) {
-        var bg = $(this).css("background-image");
-        
-        if(bg != "none") {
-            thingstoload++;
-            var url = bg.match(/(url\()+(.*)+(\))/)[2];
-            var img = document.createElement("img");
-            img.src = url;
-            img.onload = function() {
-                thingsloaded++;
-                loadComplete();
-            }
-        }
-    });
-    $(images).one("load", function() {
-        thingsloaded++;
-        loadComplete();
-    }).each(function() {
-        if(this.complete) {
-            $(this).load();
-        }
-    });
-    
-    loadComplete();
-});

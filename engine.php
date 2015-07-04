@@ -1,6 +1,6 @@
 <?php
 
-require_once("lib/memcached/MemCachedClass.php");
+require_once("../memcached/MemCachedClass.php");
 
 Class engine extends MemCachedClass {
     /**
@@ -16,21 +16,18 @@ Class engine extends MemCachedClass {
      * @return engine
      */
     
-    private $prefix;
     public function Init($template = "default", $force_reload = false, $getvar = "p", $jsgetvar = "js", $cssgetvar = "css", $imggetvar = "img") {
-        $this->prefix = __DIR__."::";
-        $this->set($this->prefix."template", $template);
-        $this->set($this->prefix."getvar", $getvar);
-        $this->set($this->prefix."jsgetvar", $jsgetvar);
-        $this->set($this->prefix."cssgetvar", $cssgetvar);
-        $this->set($this->prefix."imggetvar", $imggetvar);
-        
+        $this->set("template", $template);
+        $this->set("getvar", $getvar);
+        $this->set("jsgetvar", $jsgetvar);
+        $this->set("cssgetvar", $cssgetvar);
+        $this->set("imggetvar", $imggetvar);
         
         return $this;
     }
 
     public function forceReload($f) {
-        $this->set($this->prefix."force_reload", $f);
+        $this->set("force_reload", $f);
     }
     
     /**
@@ -42,7 +39,7 @@ Class engine extends MemCachedClass {
      */
     
     private function loadTemplate($file) {
-        return $this->minifyHtml(file_get_contents("templates/".$this->get($this->prefix."template")."/_".$file.".html"));
+        return $this->minifyHtml(file_get_contents("templates/".$this->get("template")."/_".$file.".html"));
     }
     
     /**
@@ -67,12 +64,12 @@ Class engine extends MemCachedClass {
     
     public function output($force_reload = false) {
         if(!$force_reload) {
-            $force_reload = $this->get($this->prefix."force_reload");
+            $force_reload = $this->get("force_reload");
         }
-		if(isset($_GET[$this->get($this->prefix."jsgetvar")])) {
-			echo $this->loadJavascript($_GET[$this->get($this->prefix."jsgetvar")], $force_reload);
-		} elseif(isset($_GET[$this->get($this->prefix."cssgetvar")])) {
-			echo $this->loadCss($_GET[$this->get($this->prefix."cssgetvar")], $force_reload);			
+		if(isset($_GET[$this->get("jsgetvar")])) {
+			echo $this->loadJavascript($_GET[$this->get("jsgetvar")], $force_reload);
+		} elseif(isset($_GET[$this->get("cssgetvar")])) {
+			echo $this->loadCss($_GET[$this->get("cssgetvar")], $force_reload);			
 		} else {
 			echo $this->getPage($force_reload);
 		}
@@ -87,17 +84,16 @@ Class engine extends MemCachedClass {
      */
     
     public function getPage($force_reload = false) {
-        $file = isset($_GET[$this->get($this->prefix."getvar")]) ? $_GET[$this->get($this->prefix."getvar")] : "index";
+        $file = isset($_GET[$this->get("getvar")]) ? $_GET[$this->get("getvar")] : "index";
         
-        if(!($content = $this->get($this->prefix."html_data_minified::".$file)) OR $force_reload) {
-            if(file_exists("templates/".$this->get($this->prefix."template")."/"."_".$file.".html") AND ($file != "header" AND $file != "footer")) {
+        if(!($content = $this->get("html_data_minified::".$file)) OR $force_reload) {
+            if(file_exists("templates/".$this->get("template")."/"."_".$file.".html")) {
                 $file_content = $this->loadTemplate($file);
             } else {
-                http_response_code(404);
                 $file_content = $this->loadTemplate("404");
             }
             $content = $this->loadTemplate("header") . $file_content . $this->loadTemplate("footer");
-            $this->set($this->prefix."html_data_minified::".$file, $content);
+            $this->set("html_data_minified::".$file, $content);
         }
         return $content;
     }
@@ -140,9 +136,9 @@ Class engine extends MemCachedClass {
      */
     
 	public function loadJavascript($file, $force_reload = false) {
-		if(!($content = $this->get($this->prefix."javascript_data_minified::".$file)) OR $force_reload) {
+		if(!($content = $this->get("javascript_data_minified::".$file)) OR $force_reload) {
 			$content = $this->minifyJavascript(file_get_contents($file));
-			$this->set($this->prefix."javascript_data_minified::".$file, "/* Saved in memcached ".date("d.m.Y - H:i:s", time())." */".$content);
+			$this->set("javascript_data_minified::".$file, "/* Saved in memcached ".date("d.m.Y - H:i:s", time())." */".$content);
 		}
 		return $content;
 	}
@@ -173,9 +169,9 @@ Class engine extends MemCachedClass {
      */
     
 	public function loadCss($file, $force_reload = false) {
-		if(!($content = $this->get($this->prefix."css_data_minified::".$file)) OR $force_reload) {
+		if(!($content = $this->get("css_data_minified::".$file)) OR $force_reload) {
 			$content = $this->minifyCss(file_get_contents($file));
-			$this->set($this->prefix."css_data_minified::".$file, "/* Saved in memcached ".date("d.m.Y - H:i:s", time())." */".$content);
+			$this->set("css_data_minified::".$file, "/* Saved in memcached ".date("d.m.Y - H:i:s", time())." */".$content);
 		}
 		return $content;
 		
