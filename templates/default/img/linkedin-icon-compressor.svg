@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Generator: Adobe Illustrator 15.0.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!DOCTYPE svg  PUBLIC '-//W3C//DTD SVG 1.1//EN'  'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'>
+<svg id="svg2" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 256 256" xml:space="preserve" viewBox="0 0 256 256" height="256px" width="256px" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" y="0px" x="0px" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/">
+<g id="layer1" transform="translate(-373.64 -318.34)">
+		<path id="rect1942" d="m583.66 328.85h-164.04c-19.599 0-35.487 15.888-35.487 35.487v164.02c0 19.599 15.888 35.486 35.487 35.486h164.03c19.599 0 35.487-15.888 35.487-35.486v-164.02c0.01-19.6-15.88-35.49-35.48-35.49z" fill="#1D8CB5"/>
+		<linearGradient id="path1950_1_" y2="49.203" gradientUnits="userSpaceOnUse" x2="-860.57" gradientTransform="matrix(-.5915 0 0 -.5915 -34.542 412.55)" y1="199.89" x1="-808.87">
+		<stop stop-color="#fff" offset="0"/>
+		<stop stop-color="#fff" stop-opacity="0" offset="1"/>
+	</linearGradient>
+		<path id="path1950" opacity=".7811" d="m557.06 338.9h-110.83c-29.337 0-52.955 23.81-52.955 53.385v108.13c0.95 23.087 4.603 8.491 11.555-17.075 8.081-29.713 34.396-55.682 66.445-75.145 24.461-14.855 51.84-24.341 101.68-25.244 28.26-0.53 25.76-36.7-15.9-44.06z" enable-background="new    " fill="url(#path1950_1_)"/>
+</g>
+<g id="layer1_1_" transform="translate(-200.55 -393.96)">
+	<g id="g3019" fill="#fff" transform="matrix(1.0188 0 0 -1.0188 170.6 498.03)">
+		<path id="path28_1_" d="m109.5-101.77v104.3h-34.672v-104.31h34.672zm-17.332 118.54c12.081 0 19.612 8.01 19.612 18.021-0.224 10.233-7.531 18.021-19.385 18.021-11.864 0-19.615-7.788-19.615-18.021 0-10.011 7.521-18.021 19.159-18.021h0.229z"/>
+		<path id="path30_1_" d="m128.68-101.77h34.673v58.249c0 3.119 0.226 6.235 1.143 8.462 2.5 6.232 8.209 12.681 17.784 12.681 12.547 0 17.562-9.568 17.562-23.588v-55.804h34.666v59.81c0 32.039-17.1 46.946-39.913 46.946-18.701 0-26.915-10.45-31.476-17.571h0.234v15.118h-34.673c0.47-9.786 0.01-104.3 0.01-104.3z"/>
+	</g>
+</g>
+</svg>

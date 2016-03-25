@@ -1,8 +1,13 @@
 <?php
 
-require_once("../memcached/MemCachedClass.php");
+require_once("lib/memcached/MemCachedClass.php");
+require_once("lib/smarty/libs/Smarty.class.php");
+require_once("lib/Util/util.php");
 
 Class engine extends MemCachedClass {
+    public function __construct($server = ["ip" => "localhost", "port" => 11211]) {
+        parent::__construct($server);
+    }
     /**
      * Initializes the engine
      * 
@@ -16,18 +21,56 @@ Class engine extends MemCachedClass {
      * @return engine
      */
     
+    public $smarty;
     public function Init($template = "default", $force_reload = false, $getvar = "p", $jsgetvar = "js", $cssgetvar = "css", $imggetvar = "img") {
+        $this->set("template_dir", __DIR__."/templates/");
+        $this->set("default_template_dir", __DIR__."/templates/");
         $this->set("template", $template);
         $this->set("getvar", $getvar);
         $this->set("jsgetvar", $jsgetvar);
         $this->set("cssgetvar", $cssgetvar);
         $this->set("imggetvar", $imggetvar);
+        $this->set("MC_prefix", __DIR__ . "/html_data_minified::");
+        if(!$this->get("root_dir"))
+            $this->set("root_dir", __DIR__);
+        $this->set("smarty_enable", false);
+        $this->smarty = new Smarty();
+        $this->set("tmp_vars", []);
         
         return $this;
     }
+    
+    public function enableSmarty() {
+        $this->set("smarty_enable", true);
+    }
 
+    public function setRootDir($dir) {
+        $this->set("root_dir", $dir);
+    }
+    
     public function forceReload($f) {
         $this->set("force_reload", $f);
+    }
+    
+    public function setTemplateDir($template_dir) {
+        $this->set("template_dir", $template_dir);
+    }
+    
+    public function getTemplateFile($file) {
+        $path = $this->get("template_dir").$this->get("template")."/"."_".$file.".html";
+        $test = file_exists($path);
+        
+        if(!$test) {
+            $path = $this->get("default_template_dir")."default/"."_".$file.".html";
+        }
+        
+        return $path;
+    }
+    
+    public function assign($key, $value) {
+        $tmpvars = $this->get("tmp_vars");
+        $tmpvars[$key] = $value;
+        $this->set("tmp_vars", $tmpvars);
     }
     
     /**
@@ -39,7 +82,12 @@ Class engine extends MemCachedClass {
      */
     
     private function loadTemplate($file) {
-        return $this->minifyHtml(file_get_contents("templates/".$this->get("template")."/_".$file.".html"));
+        // INSERT SMARTY SUPPORT HERE!
+        if(!$this->get("smarty_enable")) {
+            return $this->minifyHtml(file_get_contents($this->getTemplateFile($file)));
+        } else {
+            return $this->minifyHTML($this->smarty->fetch($this->getTemplateFile($file)));
+        }
     }
     
     /**
@@ -62,7 +110,7 @@ Class engine extends MemCachedClass {
      * @return void
      */
     
-    public function output($force_reload = false) {
+    public function output($callback = null, $force_reload = false) {
         if(!$force_reload) {
             $force_reload = $this->get("force_reload");
         }
@@ -71,7 +119,7 @@ Class engine extends MemCachedClass {
 		} elseif(isset($_GET[$this->get("cssgetvar")])) {
 			echo $this->loadCss($_GET[$this->get("cssgetvar")], $force_reload);			
 		} else {
-			echo $this->getPage($force_reload);
+			echo $this->getPage($callback, $force_reload);
 		}
     }
     
@@ -83,17 +131,20 @@ Class engine extends MemCachedClass {
      * @return string Returns the content of the file
      */
     
-    public function getPage($force_reload = false) {
+    public function getPage($callback = null, $force_reload = false) {
         $file = isset($_GET[$this->get("getvar")]) ? $_GET[$this->get("getvar")] : "index";
         
-        if(!($content = $this->get("html_data_minified::".$file)) OR $force_reload) {
-            if(file_exists("templates/".$this->get("template")."/"."_".$file.".html")) {
+        if(!($content = $this->get($this->get("MC_prefix").$file)) OR $force_reload) {
+            call_user_func($callback);
+            $this->smarty->assign($this->get("tmp_vars"));
+            
+            if(file_exists($this->getTemplateFile($file))) {
                 $file_content = $this->loadTemplate($file);
             } else {
                 $file_content = $this->loadTemplate("404");
             }
             $content = $this->loadTemplate("header") . $file_content . $this->loadTemplate("footer");
-            $this->set("html_data_minified::".$file, $content);
+            $this->set($this->get("MC_prefix").$file, $content);
         }
         return $content;
     }
@@ -137,7 +188,11 @@ Class engine extends MemCachedClass {
     
 	public function loadJavascript($file, $force_reload = false) {
 		if(!($content = $this->get("javascript_data_minified::".$file)) OR $force_reload) {
-			$content = $this->minifyJavascript(file_get_contents($file));
+            if(!isset($_GET["nominify"]))
+                $content = $this->minifyJavascript(file_get_contents($file));
+            else {
+                $content = file_get_contents($file);
+            }
 			$this->set("javascript_data_minified::".$file, "/* Saved in memcached ".date("d.m.Y - H:i:s", time())." */".$content);
 		}
 		return $content;
@@ -153,7 +208,7 @@ Class engine extends MemCachedClass {
     
 	public function minifyJavascript($javascript) {
 		$javascript = preg_replace("/((?:\/\*(?:[^*]|(?:\*+[^*\/]))*\*+\/)|(?:\/\/ .*))/", "", $javascript);
-		$javascript = str_replace(["\r\n","\r","\t","\n",'  ','    ','     '], '', $javascript);
+		$javascript = str_replace(["\r\n","\r","\t", "\n",'  ','    ','     '], '', $javascript);
 		$javascript = preg_replace(['(( )+\))','(\)( )+)'], ')', $javascript);
 		return $javascript;
 	}

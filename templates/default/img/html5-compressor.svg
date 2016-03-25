@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns:sketch="http://www.bohemiancoding.com/sketch/ns" xmlns="http://www.w3.org/2000/svg" height="420px" width="298px" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 298 420">
+ <title>Slice 1</title>
+ <description>Created with Sketch (http://www.bohemiancoding.com/sketch)</description>
+ <g id="Page 1" fill-rule="evenodd" fill="none">
+  <g id="Group">
+   <path id="Shape" fill="#E44F26" d="m27.383 386.27l-27.07-303.62 297.45-0.004-27.1 303.57-121.8 33.77-121.48-33.72z"/>
+   <path id="Shape" fill="#F1662A" d="m149.04 394.18l98.42-27.29 23.16-259.42h-121.58v286.71z"/>
+   <path id="Shape" fill="#EBEBEB" d="m149.04 220.08h-49.277l-3.404-38.13h52.681v-37.24h-0.13-93.247l0.892 9.99 9.152 102.62h83.333v-37.24z"/>
+   <path id="Shape" fill="#EBEBEB" d="m149.04 316.79l-0.16 0.04-41.48-11.19-2.65-29.7h-20.15-17.229l5.217 58.46 76.282 21.18 0.17-0.05v-38.74z"/>
+   <path id="Shape" fill="#010101" d="m27.988 0.135h18.924v18.696h17.311v-18.696h18.925v56.618h-18.924v-18.958h-17.31v18.958h-18.926v-56.618z"/>
+   <path id="Shape" fill="#010101" d="m108.03 18.91h-16.658v-18.775h52.248v18.775h-16.66v37.843h-18.93v-37.843z"/>
+   <path id="Shape" fill="#010101" d="m151.92 0.135h19.73l12.14 19.894 12.12-19.894h19.74v56.618h-18.84v-28.063l-13.02 20.13h-0.33l-13.03-20.13v28.063h-18.51v-56.618z"/>
+   <path id="Shape" fill="#010101" d="m225.07 0.135h18.93v37.903h26.61v18.714h-45.54v-56.617z"/>
+   <path id="Shape" fill="#fff" d="m148.91 220.08v37.24h45.85l-4.32 48.29-41.53 11.21v38.74l76.34-21.16 0.56-6.29 8.75-98.03 0.91-10h-10.04-76.52z"/>
+   <path id="Shape" fill="#fff" d="m148.91 144.71v23.13 14.02 0.09h89.83 0.12l0.74-8.37 1.7-18.88 0.89-9.99h-93.28z"/>
+  </g>
+ </g>
+</svg>
