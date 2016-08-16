@@ -10,17 +10,17 @@ Class engine extends MemCachedClass {
     }
     /**
      * Initializes the engine
-     * 
+     *
      * @param string $template  Name of the template
      * @param string $force_reload  Force a new fetch of the file instead of getting it from the cache
      * @param string $getvar  The get-variable to look for the page-id in
      * @param string $jsgetvar  The get-variable to look for javascript-file in
      * @param string $cssgetvar  The get-variable to look for css-file in
      * @param string $imggetvar  The get-variable to look for image-file in
-     * 
+     *
      * @return engine
      */
-    
+
     public $smarty;
     public function Init($template = "default", $force_reload = false, $getvar = "p", $jsgetvar = "js", $cssgetvar = "css", $imggetvar = "img") {
         $this->set("template_dir", __DIR__."/templates/");
@@ -36,10 +36,10 @@ Class engine extends MemCachedClass {
         $this->set("smarty_enable", false);
         $this->smarty = new Smarty();
         $this->set("tmp_vars", []);
-        
+
         return $this;
     }
-    
+
     public function enableSmarty() {
         $this->set("smarty_enable", true);
     }
@@ -47,40 +47,40 @@ Class engine extends MemCachedClass {
     public function setRootDir($dir) {
         $this->set("root_dir", $dir);
     }
-    
+
     public function forceReload($f) {
         $this->set("force_reload", $f);
     }
-    
+
     public function setTemplateDir($template_dir) {
         $this->set("template_dir", $template_dir);
     }
-    
+
     public function getTemplateFile($file) {
         $path = $this->get("template_dir").$this->get("template")."/"."_".$file.".html";
         $test = file_exists($path);
-        
+
         if(!$test) {
             $path = $this->get("default_template_dir")."default/"."_".$file.".html";
         }
-        
+
         return $path;
     }
-    
+
     public function assign($key, $value) {
         $tmpvars = $this->get("tmp_vars");
         $tmpvars[$key] = $value;
         $this->set("tmp_vars", $tmpvars);
     }
-    
+
     /**
      * Loads a template file and returns the minified HTML generated
-     * 
+     *
      * @param string $file The path of the file to be loaded
-     * 
+     *
      * @return string The minified contents of the HTML
      */
-    
+
     private function loadTemplate($file) {
         // INSERT SMARTY SUPPORT HERE!
         if(!$this->get("smarty_enable")) {
@@ -89,27 +89,27 @@ Class engine extends MemCachedClass {
             return $this->minifyHTML($this->smarty->fetch($this->getTemplateFile($file)));
         }
     }
-    
+
     /**
      * Minifies a string of HTML
-     * 
+     *
      * @param string $html The HTML to be minified
-     * 
+     *
      * @return string The contents of the minified HTML
      */
-    
+
     private function minifyHtml($html) {
         return preg_replace(['/\>[^\S ]+/s','/[^\S ]+\</s','/(\s)+/s','/<!--[^[if](.|\s)*?-->/'],['>','<','\\1',''],$html);
     }
-    
+
     /**
      * Outputs the contents of the loaded template to the client/browser
-     * 
+     *
      * @param bool $force_reload  Force a new fetch of the file instead of getting it from the cache
-     * 
+     *
      * @return void
      */
-    
+
     public function output($callback = null, $force_reload = false) {
         if(!$force_reload) {
             $force_reload = $this->get("force_reload");
@@ -117,27 +117,27 @@ Class engine extends MemCachedClass {
 		if(isset($_GET[$this->get("jsgetvar")])) {
 			echo $this->loadJavascript($_GET[$this->get("jsgetvar")], $force_reload);
 		} elseif(isset($_GET[$this->get("cssgetvar")])) {
-			echo $this->loadCss($_GET[$this->get("cssgetvar")], $force_reload);			
+			echo $this->loadCss($_GET[$this->get("cssgetvar")], $force_reload);
 		} else {
 			echo $this->getPage($callback, $force_reload);
 		}
     }
-    
+
     /**
      * Retrieves the correct page associated with the get-variable passed. Displays a 404 page if not found
-     * 
+     *
      * @param bool $force_reload Force a new fetch of the file instead of getting it from the cache
-     * 
+     *
      * @return string Returns the content of the file
      */
-    
+
     public function getPage($callback = null, $force_reload = false) {
         $file = isset($_GET[$this->get("getvar")]) ? $_GET[$this->get("getvar")] : "index";
-        
+
         if(!($content = $this->get($this->get("MC_prefix").$file)) OR $force_reload) {
             call_user_func($callback);
             $this->smarty->assign($this->get("tmp_vars"));
-            
+
             if(file_exists($this->getTemplateFile($file))) {
                 $file_content = $this->loadTemplate($file);
             } else {
@@ -150,16 +150,16 @@ Class engine extends MemCachedClass {
     }
     /**
      * Function for locking the web-page with a password. You need to pass the password as a string trough the given get-variable in the request URL
-     * 
-     * @param string $password 
-     * @param string $getvar  
-     * 
+     *
+     * @param string $password
+     * @param string $getvar
+     *
      * @return void
      */
-	
+
     public function lock($password, $getvar = "pw") {
         $access = @$_COOKIE["lock-pw"] || false;
-        
+
         if(array_key_exists($getvar, $_GET)) {
             if($_GET[$getvar] == $password) {
                 setcookie("lock-pw", true);
@@ -167,7 +167,7 @@ Class engine extends MemCachedClass {
                 $access = true;
             }
         }
-            
+
         if(!$access) {
             http_response_code(403);
             die("403 Forbidden");
@@ -175,17 +175,17 @@ Class engine extends MemCachedClass {
             return;
         }
     }
-    
+
 	// Javascript
     /**
      * Loads, minifies and returns the contents of a javascript file
-     * 
+     *
      * @param string $file Path to the file to load
      * @param bool $force_reload  Force a new fetch of the file instead of getting it from the cache
-     * 
+     *
      * @return string The contents of the compiled javascript
      */
-    
+
 	public function loadJavascript($file, $force_reload = false) {
 		if(!($content = $this->get("javascript_data_minified::".$file)) OR $force_reload) {
             if(!isset($_GET["nominify"]))
@@ -197,49 +197,49 @@ Class engine extends MemCachedClass {
 		}
 		return $content;
 	}
-	
+
     /**
      * Minifies a string of javascript
-     * 
+     *
      * @param string $javascript The javascript that should be minified
-     * 
+     *
      * @return string The minified javascript
      */
-    
+
 	public function minifyJavascript($javascript) {
 		$javascript = preg_replace("/((?:\/\*(?:[^*]|(?:\*+[^*\/]))*\*+\/)|(?:\/\/ .*))/", "", $javascript);
 		$javascript = str_replace(["\r\n","\r","\t", "\n",'  ','    ','     '], '', $javascript);
 		$javascript = preg_replace(['(( )+\))','(\)( )+)'], ')', $javascript);
 		return $javascript;
 	}
-	
+
 	// CSS
     /**
      * Loads, minifies and returns the contents of a css file
-     * 
+     *
      * @param string $file Path to the file to load
      * @param bool $force_reload  Force a new fetch of the file instead of getting it from the cache
-     * 
+     *
      * @return string The contents of the compiled css
      */
-    
+
 	public function loadCss($file, $force_reload = false) {
 		if(!($content = $this->get("css_data_minified::".$file)) OR $force_reload) {
 			$content = $this->minifyCss(file_get_contents($file));
 			$this->set("css_data_minified::".$file, "/* Saved in memcached ".date("d.m.Y - H:i:s", time())." */".$content);
 		}
 		return $content;
-		
+
 	}
-	
+
     /**
      * Minifies a string of css
-     * 
+     *
      * @param string $css The css that should be minified
-     * 
+     *
      * @return string The minified css
      */
-    
+
 	public function minifyCss($css) {
 		$css = preg_replace('!/\*[^*]*\*+([^/][^*]*\*+)*/!', '', $css);
 		$css = str_replace(["\r\n","\r","\n","\t",'  ','    ','     '], '', $css);
