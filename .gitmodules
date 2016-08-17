@@ -1,3 +1,9 @@
 [submodule "lib/memcached"]
 	path = lib/memcached
 	url = git@github.com:thmundal/memcachedclass.git
+[submodule "lib/smarty"]
+	path = lib/smarty
+	url = https://github.com/smarty-php/smarty.git
+[submodule "lib/Util"]
+	path = lib/Util
+	url = git@github.com:thmundal/Util.git
