@@ -5,6 +5,9 @@ require_once("lib/smarty/libs/Smarty.class.php");
 require_once("lib/Util/util.php");
 
 Class engine extends MemCachedClass {
+    private $jsfiles = [];
+    private $cssfiles = [];
+
     public function __construct($server = ["ip" => "localhost", "port" => 11211]) {
         parent::__construct($server);
     }
@@ -61,6 +64,30 @@ Class engine extends MemCachedClass {
         $this->set("template_dir", $template_dir);
     }
 
+    public function addJS($jsfile) {
+      array_push($this->jsfiles, $jsfile);
+    }
+
+    public function addCSS($cssfile) {
+      array_push($this->cssfiles, $cssfile);
+    }
+
+    public function getJsMarkup() {
+      $markup = "";
+      foreach($this->jsfiles as $file) {
+        $markup .= '<script type="javascript" src="'.$file.'"></script>';
+      }
+      return $markup;
+    }
+
+    public function getCssMarkup() {
+      $markup = "";
+      foreach($this->cssfiles as $file) {
+        $markup .= '<link rel="stylesheet" href="'.$file.' />"';
+      }
+      return $markup;
+    }
+
     public function getTemplateFile($file) {
         $path = $this->get("template_dir").$this->get("template")."/"."_".$file.".html";
         $test = file_exists($path);
@@ -91,6 +118,8 @@ Class engine extends MemCachedClass {
         if(!$this->get("smarty_enable")) {
             return $this->minifyHtml(file_get_contents($this->getTemplateFile($file)));
         } else {
+            $this->smarty->assign("engine_js_files_markup", $this->getJsMarkup());
+            $this->smarty->assign("engine_js_files_paths", $this->jsfiles);
             return $this->minifyHTML($this->smarty->fetch($this->getTemplateFile($file)));
         }
     }
@@ -116,16 +145,16 @@ Class engine extends MemCachedClass {
      */
 
     public function output($callback = null, $force_reload = false) {
-        if(!$force_reload) {
-            $force_reload = $this->get("force_reload");
-        }
-		if(isset($_GET[$this->get("jsgetvar")])) {
-			echo $this->loadJavascript($_GET[$this->get("jsgetvar")], $force_reload);
-		} elseif(isset($_GET[$this->get("cssgetvar")])) {
-			echo $this->loadCss($_GET[$this->get("cssgetvar")], $force_reload);
-		} else {
-			echo $this->getPage($callback, $force_reload);
-		}
+      if(!$force_reload) {
+          $force_reload = $this->get("force_reload");
+      }
+  		if(isset($_GET[$this->get("jsgetvar")])) {
+  			echo $this->loadJavascript($_GET[$this->get("jsgetvar")], $force_reload);
+  		} elseif(isset($_GET[$this->get("cssgetvar")])) {
+  			echo $this->loadCss($_GET[$this->get("cssgetvar")], $force_reload);
+  		} else {
+  			echo $this->getPage($callback, $force_reload);
+  		}
     }
 
     /**
@@ -148,7 +177,14 @@ Class engine extends MemCachedClass {
             } else {
                 $file_content = $this->loadTemplate("404");
             }
-            $content = $this->loadTemplate("header") . $file_content . $this->loadTemplate("footer");
+            if(!$this->noheader)
+              $content = $this->loadTemplate("header");
+
+            $content .= $file_content;
+
+            if(!$this->nofooter)
+              $content .= $this->loadTemplate("footer");
+
             $this->set($this->get("MC_prefix").$file, $content);
         }
         return $content;
