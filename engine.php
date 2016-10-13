@@ -120,6 +120,9 @@ Class engine extends MemCachedClass {
         } else {
             $this->smarty->assign("engine_js_files_markup", $this->getJsMarkup());
             $this->smarty->assign("engine_js_files_paths", $this->jsfiles);
+
+            $this->smarty->assign("engine_css_files_markup", $this->getCssMarkup());
+            $this->smarty->assign("engine_css_files_paths", $this->cssfiles);
             return $this->minifyHTML($this->smarty->fetch($this->getTemplateFile($file)));
         }
     }
