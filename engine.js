@@ -12,16 +12,16 @@ function l() {
                "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"].concat(engine.css);;
 	// DO NOT LOAD THIS FILE (default.js) IN THE ARRAY! MEGASUPERRECURSIONMONSTER!
 	var js = engine.js;
-    
+
     if(js.indexOf("engine/engine.js") > -1) {
         throw new Error("Fatal error: engine.js included in load will cause an endless loop.");
     }
-    
-    var depends = ["http:\/\/code.jquery.com/jquery-2.1.4.min.js"];
+
+    var depends = ["http:\/\/code.jquery.com/jquery-2.1.4.min.js", "http:\/\/code.jquery.com/ui/1.12.1/jquery-ui.min.js"];
     var dcount = 0;
-    
+
     function dependcomplete() {
-        if((++dcount)==depends.length) {
+        if((dcount)==depends.length) {
             var count = 0;
 
             function complete() {
@@ -30,13 +30,25 @@ function l() {
                 }
             }
             css.forEach(function(i) { {var c = document.createElement("link"); c.href = i; c.type = "text/css"; c.rel = "stylesheet"; document.head.appendChild(c); c.onload = complete; } });
-            js.forEach(function(i) { {var j = document.createElement("script"); j.src=i; document.head.appendChild(j); j.onload = complete; } }); 
+            js.forEach(function(i) { {var j = document.createElement("script"); j.src=i; document.head.appendChild(j); j.onload = complete; } });
+
+            return true;
         }
+
+        return false;
     }
-    
-    depends.forEach(function(i) { {var j = document.createElement("script"); j.src=i; document.head.appendChild(j); j.onload = dependcomplete; } }); 
-    
-    
+
+    // Load dependencies in sequencial order
+    function loadDependicy() {
+      if(!dependcomplete()) {
+        var i = depends[dcount];
+        var j = document.createElement("script"); j.src=i; document.head.appendChild(j); j.onload = loadDependicy;
+        dcount++;
+      }
+    }
+    loadDependicy();
+
+    // depends.forEach(function(i) { {var j = document.createElement("script"); j.src=i; document.head.appendChild(j); j.onload = dependcomplete; } });
 }
 
 var raf = requestAnimationFrame || mozRequestAnimationFrame ||
