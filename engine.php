@@ -251,7 +251,8 @@ Class engine extends MemCachedClass {
      */
 
 	public function minifyJavascript($javascript) {
-		$javascript = preg_replace("/((?:\/\*(?:[^*]|(?:\*+[^*\/]))*\*+\/)|(?:\/\/ .*))/", "", $javascript);
+		//$javascript = preg_replace("/((?:\/\*(?:[^*]|(?:\*+[^*\/]))*\*+\/)|(?:\/\/ .*))/", "", $javascript);
+		$javascript = preg_replace('/(?:(?:\/\*(?:[^*]|(?:\*+[^*\/]))*\*+\/)|(?:(?<!\:|\\\)\/\/[^"\'].*))/', '', $javascript);
 		$javascript = str_replace(["\r\n","\r","\t", "\n",'  ','    ','     '], '', $javascript);
 		$javascript = preg_replace(['(( )+\))','(\)( )+)'], ')', $javascript);
 		return $javascript;
