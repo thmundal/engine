@@ -22,15 +22,17 @@ function l() {
 
     function dependcomplete() {
         if((dcount)==depends.length) {
+            console.info("Dependencies loaded, loading scripts");
             var count = 0;
 
             function complete() {
                 if((++count)===(css.length + js.length)) {
+                    console.info("All scripts loaded, running callbacks");
                     callbacks.forEach(function(i) { i.call() });
                 }
             }
             css.forEach(function(i) { {var c = document.createElement("link"); c.href = i; c.type = "text/css"; c.rel = "stylesheet"; document.head.appendChild(c); c.onload = complete; } });
-            js.forEach(function(i) { {var j = document.createElement("script"); j.src=i; document.head.appendChild(j); j.onload = complete; } });
+            js.forEach(function(i) { {var j = document.createElement("script"); j.src=i; document.head.appendChild(j); j.onload = complete; console.info("loading ", i) } });
 
             return true;
         }
@@ -40,8 +42,12 @@ function l() {
 
     // Load dependencies in sequencial order
     function loadDependicy() {
+      if(this != window) {
+        console.info(this.src, " loaded");
+      }
       if(!dependcomplete()) {
         var i = depends[dcount];
+        console.info("loading ", i);
         var j = document.createElement("script"); j.src=i; document.head.appendChild(j); j.onload = loadDependicy;
         dcount++;
       }

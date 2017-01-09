@@ -220,6 +220,10 @@ Class engine extends MemCachedClass {
         }
     }
 
+    public function redirect($url) {
+      header("location: " . $url);
+    }
+
 	// Javascript
     /**
      * Loads, minifies and returns the contents of a javascript file
