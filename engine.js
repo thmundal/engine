@@ -9,7 +9,7 @@ if(isUnSupported()) {
 var callbacks = [];
 function l() {
 	var css = ["http:\/\/fonts.googleapis.com/css?family=Open+Sans+Condensed:300",
-               "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"].concat(engine.css);;
+               "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"].concat(engine.css);;
 	// DO NOT LOAD THIS FILE (default.js) IN THE ARRAY! MEGASUPERRECURSIONMONSTER!
 	var js = engine.js;
 
@@ -69,6 +69,6 @@ function addLoadedCallback(callback) {
 addLoadedCallback(function() {
     // Hack-in load bootstrap
     var bs = document.createElement("script");
-    bs.src = "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js";
+    bs.src = "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js";
     document.head.appendChild(bs);
 });
