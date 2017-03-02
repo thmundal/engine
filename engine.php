@@ -7,9 +7,11 @@ require_once("lib/Util/util.php");
 Class engine extends MemCachedClass {
     private $jsfiles = [];
     private $cssfiles = [];
+    public $memcached = false;
+    private $attrs = [];
 
     public function __construct($server = ["ip" => "localhost", "port" => 11211]) {
-        parent::__construct($server);
+        //parent::__construct($server);
     }
     /**
      * Initializes the engine
@@ -36,16 +38,27 @@ Class engine extends MemCachedClass {
         $this->set("MC_prefix", __DIR__ . "/html_data_minified::");
         if(!$this->get("root_dir"))
             $this->set("root_dir", __DIR__);          //<---- THIS IS MAGIC, AND CAN BE SCARY!
+
         $this->set("smarty_enable", false);
         $this->smarty = new Smarty();
         $this->set("tmp_vars", []);
         //$this->smarty->plugins_dir[] = "lib/smarty_plugins";
-        $this->smarty->addPluginsDir($this->get("root_dir")."/lib/engine/lib/smarty_plugins");
+        $this->smarty->addPluginsDir($this->get("root_dir")."/lib/smarty_plugins");
 
         $this->smarty->loadPlugin('smarty_compiler_switch');
         $this->smarty->registerFilter('post', 'smarty_postfilter_switch');
 
         return $this;
+    }
+
+    public function get($v) {
+      if($this->memcached) return parent::get($v);
+      else return arrGet($this->attrs, $v, false);
+    }
+
+    public function set($n, $v) {
+      if($this->memcached) parent::set($n, $v);
+      $this->attrs[$n] = $v;
     }
 
     public function enableSmarty() {
