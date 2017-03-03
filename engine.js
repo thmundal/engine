@@ -17,7 +17,7 @@ function l() {
         throw new Error("Fatal error: engine.js included in load will cause an endless loop.");
     }
 
-    var depends = ["http:\/\/code.jquery.com/jquery-2.1.4.min.js", "http:\/\/code.jquery.com/ui/1.12.1/jquery-ui.min.js"];
+    var depends = ["http:\/\/code.jquery.com/jquery-3.1.1.min.js", "http:\/\/code.jquery.com/ui/1.12.1/jquery-ui.min.js"];
     var dcount = 0;
 
     function dependcomplete() {
