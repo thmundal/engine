@@ -9,6 +9,7 @@ Class engine extends MemCachedClass {
     private $cssfiles = [];
     public $memcached = false;
     private $attrs = [];
+    public $version;
 
     public function __construct($server = ["ip" => "localhost", "port" => 11211]) {
         //parent::__construct($server);
@@ -39,6 +40,7 @@ Class engine extends MemCachedClass {
         if(!$this->get("root_dir"))
             $this->set("root_dir", __DIR__);          //<---- THIS IS MAGIC, AND CAN BE SCARY!
 
+        $this->version = "0.0.0";
         $this->set("smarty_enable", false);
         $this->smarty = new Smarty();
         $this->set("tmp_vars", []);
@@ -49,6 +51,10 @@ Class engine extends MemCachedClass {
         $this->smarty->registerFilter('post', 'smarty_postfilter_switch');
 
         return $this;
+    }
+
+    public function setVersion($v) {
+      $this->version = $v;
     }
 
     public function get($v) {
@@ -78,11 +84,11 @@ Class engine extends MemCachedClass {
     }
 
     public function addJS($jsfile) {
-      array_push($this->jsfiles, $jsfile);
+      array_push($this->jsfiles, $jsfile.'?v='.$this->version);
     }
 
     public function addCSS($cssfile) {
-      array_push($this->cssfiles, $cssfile);
+      array_push($this->cssfiles, $cssfile.'?v='.$this->version);
     }
 
     public function getJsMarkup() {
