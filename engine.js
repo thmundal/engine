@@ -3,12 +3,12 @@ function isUnSupported() {
 }
 
 if(isUnSupported()) {
-    document.body.innerHTML = 'You are using a very, very old web-browser which is not supported by this site. Please update your browser. We can recommend <a href="http://chrome.google.com">Google Chrome</a>';
+    document.body.innerHTML = 'You are using a very, very old web-browser which is not supported by this site. Please update your browser. We can recommend <a href="https://chrome.google.com">Google Chrome</a>';
     throw new Error("Using an unsupported browser, stopping execution");
 }
 var callbacks = [];
 function l() {
-	var css = ["http:\/\/fonts.googleapis.com/css?family=Open+Sans+Condensed:300",
+	var css = ["https:\/\/fonts.googleapis.com/css?family=Open+Sans+Condensed:300",
                "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"].concat(engine.css);;
 	// DO NOT LOAD THIS FILE (default.js) IN THE ARRAY! MEGASUPERRECURSIONMONSTER!
 	var js = engine.js;
@@ -17,7 +17,7 @@ function l() {
         throw new Error("Fatal error: engine.js included in load will cause an endless loop.");
     }
 
-    var depends = ["http:\/\/code.jquery.com/jquery-3.2.1.min.js", "http:\/\/code.jquery.com/ui/1.12.1/jquery-ui.min.js"];
+    var depends = ["https:\/\/code.jquery.com/jquery-3.2.1.min.js", "https:\/\/code.jquery.com/ui/1.12.1/jquery-ui.min.js"];
     var dcount = 0;
 
     function dependcomplete() {
