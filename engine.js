@@ -3,13 +3,13 @@ function isUnSupported() {
 }
 
 if(isUnSupported()) {
-    document.body.innerHTML = 'You are using a very, very old web-browser which is not supported by this site. Please update your browser. We can recommend <a href="http://chrome.google.com">Google Chrome</a>';
+    document.body.innerHTML = 'You are using a very, very old web-browser which is not supported by this site. Please update your browser. We can recommend <a href="https://chrome.google.com">Google Chrome</a>';
     throw new Error("Using an unsupported browser, stopping execution");
 }
 var callbacks = [];
 function l() {
 	var css = ["\/\/fonts.googleapis.com/css?family=Open+Sans+Condensed:300",
-               "\/\/maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"].concat(engine.css);;
+               "\/\/maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"].concat(engine.css);
 	// DO NOT LOAD THIS FILE (default.js) IN THE ARRAY! MEGASUPERRECURSIONMONSTER!
 	var js = engine.js;
 
